@@ -1,0 +1,87 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <neuralnetwork.h>
+
+using namespace std;
+
+class CistercianCipher {
+public:
+  CistercianCipher() {
+  }
+
+  void train(vector<string> encryptedText, vector<string> decryptedText) {
+    // Create a neural network with one hidden layer.
+    NeuralNetwork network(1, 26, 26);
+
+    // Train the neural network using backpropagation.
+    network.train(encryptedText, decryptedText);
+  }
+
+  string encrypt(string text) {
+    // Convert the text to a vector of integers.
+    vector<int> textVector;
+    for (char c : text) {
+      textVector.push_back(c - 'a');
+    }
+
+    // Encrypt the text using the neural network.
+    vector<int> encryptedTextVector = network.predict(textVector);
+
+    // Convert the encrypted text vector back to a string.
+    string encryptedText = "";
+    for (int i : encryptedTextVector) {
+      encryptedText += (char)('a' + i);
+    }
+
+    return encryptedText;
+  }
+
+  string decrypt(string text) {
+    // Convert the text to a vector of integers.
+    vector<int> textVector;
+    for (char c : text) {
+      textVector.push_back(c - 'a');
+    }
+
+    // Decrypt the text using the neural network.
+    vector<int> decryptedTextVector = network.predict(textVector);
+
+    // Convert the decrypted text vector back to a string.
+    string decryptedText = "";
+    for (int i : decryptedTextVector) {
+      decryptedText += (char)('a' + i);
+    }
+
+    return decryptedText;
+  }
+
+private:
+  NeuralNetwork network;
+};
+
+int main() {
+  // Create a CistercianCipher object.
+  CistercianCipher cipher;
+
+  // Load the training data.
+  vector<string> encryptedText;
+  vector<string> decryptedText;
+  loadData("data.txt", encryptedText, decryptedText);
+
+  // Train the CistercianCipher object.
+  cipher.train(encryptedText, decryptedText);
+
+  // Encrypt some text.
+  string text = "Hello, world!";
+  string encryptedText = cipher.encrypt(text);
+
+  // Decrypt the encrypted text.
+  string decryptedText = cipher.decrypt(encryptedText);
+
+  // Print the encrypted and decrypted text.
+  cout << "Encrypted text: " << encryptedText << endl;
+  cout << "Decrypted text: " << decryptedText << endl;
+
+  return 0;
+}
